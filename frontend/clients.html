@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clients Management - CRM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-chart-network"></i>
+                    <span>CRM</span>
+                </div>
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="leads.html" class="nav-link">
+                        <i class="fas fa-fire"></i>
+                        <span>Leads</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="clients.html" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Clients</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="workflows.html" class="nav-link">
+                        <i class="fas fa-gear"></i>
+                        <span>Workflows</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>Clients Management</h1>
+                    <p class="text-muted">Manage your active clients</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary" onclick="openClientModal()">
+                        <i class="fas fa-plus"></i> Add New Client
+                    </button>
+                </div>
+            </header>
+            <div class="dashboard-content">
+                <section class="card">
+                    <div class="filters-bar">
+                        <div class="search-bar" style="flex: 1; max-width: 400px;">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search by name or email...">
+                        </div>
+                        <select class="filter-select" id="statusFilter">
+                            <option value="">All Statuses</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="on-hold">On Hold</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="applyFilters()">
+                            <i class="fas fa-filter"></i> Apply
+                        </button>
+                    </div>
+                    <div class="table-responsive" id="clientsTableContainer" style="margin-top: var(--spacing-lg);">
+                        <p style="text-align: center; padding: 40px; color: var(--color-text-secondary);">Loading clients...</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <div id="clientModal" class="modal">
+        <div class="modal-backdrop" onclick="closeClientModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Client</h2>
+                <button class="modal-close" onclick="closeClientModal()"></button>
+            </div>
+            <div style="padding: var(--spacing-lg);">
+                <form id="clientForm" class="form">
+                    <input type="hidden" id="clientId">
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input type="text" id="clientName" required placeholder="Enter contact person name">
+                    </div>
+                    <div class="form-group">
+                        <label>Company</label>
+                        <input type="text" id="clientCompany" placeholder="Enter company name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="clientEmail" required placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="clientPhone" placeholder="Enter phone number">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="clientStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="on-hold">On Hold</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeClientModal()">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="saveClient()">Save Client</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="toastContainer" class="toast-container"></div>
+    <script src="js/config.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/clients.js"></script>
+</body>
+</html>

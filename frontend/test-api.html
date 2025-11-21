@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test - Company Fields</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #5b4e8f;
+            border-bottom: 2px solid #5b4e8f;
+            padding-bottom: 10px;
+        }
+        button {
+            background: #5b4e8f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #7a6fb5;
+        }
+        pre {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 CRM API Testing - Company Fields</h1>
+    
+    <div class="test-section">
+        <h2>1. Backend Connection Test</h2>
+        <button onclick="testBackendConnection()">Test Backend Connection</button>
+        <pre id="connectionResult">Click button to test...</pre>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Fetch All Leads (with Company)</h2>
+        <button onclick="fetchLeads()">Fetch Leads</button>
+        <pre id="leadsResult">Click button to test...</pre>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Create Test Lead with Company</h2>
+        <div>
+            <input type="text" id="leadName" placeholder="Contact Name" value="Test Person">
+            <input type="text" id="leadCompany" placeholder="Company Name" value="Test Company Ltd">
+            <input type="email" id="leadEmail" placeholder="Email" value="test@example.com">
+            <input type="tel" id="leadPhone" placeholder="Phone" value="+91 98765 43210">
+        </div>
+        <button onclick="createTestLead()">Create Lead</button>
+        <pre id="createLeadResult">Fill form and click button...</pre>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Fetch All Clients (with Company)</h2>
+        <button onclick="fetchClients()">Fetch Clients</button>
+        <pre id="clientsResult">Click button to test...</pre>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Create Test Client with Company</h2>
+        <div>
+            <input type="text" id="clientName" placeholder="Contact Name" value="Test Client">
+            <input type="text" id="clientCompany" placeholder="Company Name" value="Test Corp Pvt Ltd">
+            <input type="email" id="clientEmail" placeholder="Email" value="client@example.com">
+            <input type="tel" id="clientPhone" placeholder="Phone" value="+91 98765 43211">
+        </div>
+        <button onclick="createTestClient()">Create Client</button>
+        <pre id="createClientResult">Fill form and click button...</pre>
+    </div>
+
+    <div class="test-section">
+        <h2>6. Database Column Check</h2>
+        <button onclick="checkDatabase()">Check Database Columns</button>
+        <pre id="dbCheckResult">Click button to check if company columns exist...</pre>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api';
+
+        async function testBackendConnection() {
+            const result = document.getElementById('connectionResult');
+            result.textContent = 'Testing connection...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/leads`);
+                if (response.ok) {
+                    result.innerHTML = '<span class="success">✅ Backend is running!</span>\n' +
+                                     `Status: ${response.status}\n` +
+                                     `URL: ${API_BASE_URL}`;
+                } else {
+                    result.innerHTML = '<span class="error">❌ Backend returned error</span>\n' +
+                                     `Status: ${response.status}`;
+                }
+            } catch (error) {
+                result.innerHTML = '<span class="error">❌ Cannot connect to backend!</span>\n' +
+                                 'Error: ' + error.message + '\n\n' +
+                                 'Make sure:\n' +
+                                 '1. Backend server is running (npm start)\n' +
+                                 '2. Server is on port 5000\n' +
+                                 '3. XAMPP MySQL is running';
+            }
+        }
+
+        async function fetchLeads() {
+            const result = document.getElementById('leadsResult');
+            result.textContent = 'Fetching leads...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/leads`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const leadsWithCompany = data.data.filter(l => l.company);
+                    result.innerHTML = `<span class="success">✅ Found ${data.data.length} leads</span>\n` +
+                                     `Leads with company: ${leadsWithCompany.length}\n\n` +
+                                     'Sample data:\n' +
+                                     JSON.stringify(data.data.slice(0, 3), null, 2);
+                } else {
+                    result.innerHTML = '<span class="error">❌ Failed to fetch</span>\n' +
+                                     JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                result.innerHTML = '<span class="error">❌ Error:</span> ' + error.message;
+            }
+        }
+
+        async function createTestLead() {
+            const result = document.getElementById('createLeadResult');
+            result.textContent = 'Creating lead...';
+            
+            const leadData = {
+                name: document.getElementById('leadName').value,
+                company: document.getElementById('leadCompany').value,
+                email: document.getElementById('leadEmail').value,
+                phone: document.getElementById('leadPhone').value,
+                status: 'new',
+                source: 'website'
+            };
+
+            console.log('Sending lead data:', leadData);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/leads`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(leadData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.innerHTML = '<span class="success">✅ Lead created successfully!</span>\n\n' +
+                                     'Created lead data:\n' +
+                                     JSON.stringify(data.data, null, 2);
+                } else {
+                    result.innerHTML = '<span class="error">❌ Failed to create lead</span>\n' +
+                                     JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                result.innerHTML = '<span class="error">❌ Error:</span> ' + error.message;
+            }
+        }
+
+        async function fetchClients() {
+            const result = document.getElementById('clientsResult');
+            result.textContent = 'Fetching clients...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/clients`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const clientsWithCompany = data.data.filter(c => c.company);
+                    result.innerHTML = `<span class="success">✅ Found ${data.data.length} clients</span>\n` +
+                                     `Clients with company: ${clientsWithCompany.length}\n\n` +
+                                     'Sample data:\n' +
+                                     JSON.stringify(data.data.slice(0, 3), null, 2);
+                } else {
+                    result.innerHTML = '<span class="error">❌ Failed to fetch</span>\n' +
+                                     JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                result.innerHTML = '<span class="error">❌ Error:</span> ' + error.message;
+            }
+        }
+
+        async function createTestClient() {
+            const result = document.getElementById('createClientResult');
+            result.textContent = 'Creating client...';
+            
+            const clientData = {
+                name: document.getElementById('clientName').value,
+                company: document.getElementById('clientCompany').value,
+                email: document.getElementById('clientEmail').value,
+                phone: document.getElementById('clientPhone').value
+            };
+
+            console.log('Sending client data:', clientData);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/clients`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(clientData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.innerHTML = '<span class="success">✅ Client created successfully!</span>\n\n' +
+                                     'Created client data:\n' +
+                                     JSON.stringify(data.data, null, 2);
+                } else {
+                    result.innerHTML = '<span class="error">❌ Failed to create client</span>\n' +
+                                     JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                result.innerHTML = '<span class="error">❌ Error:</span> ' + error.message;
+            }
+        }
+
+        async function checkDatabase() {
+            const result = document.getElementById('dbCheckResult');
+            result.innerHTML = '<span style="color: orange;">ℹ️ To check database:</span>\n\n' +
+                             '1. Open phpMyAdmin (http://localhost/phpmyadmin/)\n' +
+                             '2. Select database: lead_client_crm\n' +
+                             '3. Click on "leads" table → Structure tab\n' +
+                             '4. Look for "company" column\n' +
+                             '5. Click on "clients" table → Structure tab\n' +
+                             '6. Look for "company" column\n\n' +
+                             'Or run this SQL in phpMyAdmin:\n\n' +
+                             'DESCRIBE leads;\n' +
+                             'DESCRIBE clients;\n\n' +
+                             'The company column should appear after the name column.';
+        }
+
+        // Auto-test on page load
+        window.onload = function() {
+            testBackendConnection();
+        };
+    </script>
+</body>
+</html>
