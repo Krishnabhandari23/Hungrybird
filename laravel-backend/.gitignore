@@ -1,0 +1,16 @@
+/vendor/
+/node_modules/
+/.env
+/storage/*.log
+/storage/logs/*
+/bootstrap/cache/*
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.sublime-*
+composer.lock
+package-lock.json
